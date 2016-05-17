@@ -1,0 +1,6 @@
+= DeskOS: libdvbpsi RPM
+
+This is the _libdvbpsi_ RPM package for the *DeskOS* operating system.
+
+Upstream comes from the NUX Dextop 7:
+http://li.nux.ro/download/nux/dextop/el7/SRPMS/libdvbpsi-0.2.2-3.el7.nux.src.rpm[libdvbpsi-0.2.2-3.el7.nux.src.rpm]
