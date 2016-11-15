@@ -1,20 +1,22 @@
-Summary: 	Library for MPEG TS and DVB PSI tables decoding and generation
-Name: 		libdvbpsi
-Version: 	0.2.2
-Release: 	4%{?dist}
-License: 	LGPLv2+
-Group: 		System Environment/Libraries
-URL: 		http://www.videolan.org/developers/libdvbpsi.html
-Source0: 	http://download.videolan.org/pub/libdvbpsi/%{version}/%{name}-%{version}.tar.bz2
-BuildRoot: 	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Summary:	Library for MPEG TS and DVB PSI tables decoding and generation
+Name:		libdvbpsi
+Version:	1.3.0
+Release:	2.1%{?pre}%{?dist}
+License:	LGPLv2+
+URL:		http://www.videolan.org/developers/libdvbpsi.html
+Source0:	http://download.videolan.org/pub/libdvbpsi/%{version}/%{name}-%{version}%{?pre}.tar.bz2
+
+BuildRequires:	gcc
 BuildRequires:	graphviz doxygen
+BuildRequires:	libtool
 
 %package devel
-Summary: 	Development package for %{name}
-Group: 		Development/Libraries
-Requires: 	%{name} = %{version}-%{release}
+Summary:	Development package for %{name}
+Requires:	%{name}%{_isa} = %{version}-%{release}
 
-# -----------------------------------------------------------------------------
+%package doc
+Summary:	Documentation for %{name}
+
 
 %description
 libdvbpsi is a very simple and fully portable library designed for
@@ -25,57 +27,88 @@ libdvbpsi is a very simple and fully portable library designed for
 MPEG TS and DVB PSI table decoding and generation.
 This package contains development files for %{name}
 
-# -----------------------------------------------------------------------------
+%description doc
+Documentation for %{name}.
+
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}%{?pre}
+autoreconf -vif
 
-
-
-# -----------------------------------------------------------------------------
 
 %build
 %configure --disable-dependency-tracking --disable-static
-make %{?_smp_mflags}
-make doc
+%make_build
+make %{?_smp_mflags} doc
 
-# -----------------------------------------------------------------------------
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
-rm -f $RPM_BUILD_ROOT%{_libdir}/lib*.la
+%make_install INSTALL="install -p"
+rm -f %{buildroot}%{_libdir}/lib*.la
 
-# -----------------------------------------------------------------------------
-
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-# -----------------------------------------------------------------------------
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root,-)
-%doc AUTHORS COPYING ChangeLog README
+%doc AUTHORS ChangeLog README
+%license COPYING
 %{_libdir}/%{name}.so.*
 
 %files devel
-%defattr(-,root,root,-)
-%doc doc/doxygen/html
 %{_includedir}/dvbpsi/
 %{_libdir}/lib*.so
 %{_libdir}/pkgconfig/libdvbpsi.pc
 
-# -----------------------------------------------------------------------------
+%files doc
+%doc doc/doxygen/html
+
 
 %changelog
-* Mon May 16 2016 Ricardo Arguello <rarguello@deskosproject.org> - 0.2.2-4
+* Tue Nov 15 2016 Ricardo Arguello <rarguello@deskosproject.org> - 1.3.0-2.1
 - Rebuilt for DeskOS
 
-* Sun Apr 28 2013 Nicolas Chauvet <kwizart@gmail.com> - 0.2.2-3
-- Rebuilt for http://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+* Tue Oct 04 2016 Nux <rpm@li.nux.ro> - 1.3.0-2
+- decrementing release number to gracefully be upgraded by EPEL package
+
+* Mon Sep 26 2016 Nicolas Chauvet <kwizart@gmail.com> - 1.3.0-3
+- Add doc sub-package
+- clean mixed tab and space
+- add %%{?_smp_mflags} for doc
+
+* Thu Sep 15 2016 Nicolas Chauvet <kwizart@gmail.com> - 1.3.0-2
+- Spec file clean-up
+
+* Sat Oct 24 2015 Nicolas Chauvet <kwizart@gmail.com> - 1.3.0-1
+- Update to 1.3.0
+
+* Sat Oct 24 2015 Nicolas Chauvet <kwizart@gmail.com> - 1.2.0-3
+- backport patch - rfbz#3729
+
+* Sun Apr 26 2015 Nicolas Chauvet <kwizart@gmail.com> - 1.2.0-2
+- Backport patch to disable Werror - fix f22
+
+* Sat Nov 15 2014 Nicolas Chauvet <kwizart@gmail.com> - 1.2.0-1
+- Update to 1.2.0
+
+* Sun Aug 31 2014 Sérgio Basto <sergio@serjux.com> - 1.1.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
+* Sun Nov 10 2013 Nicolas Chauvet <kwizart@gmail.com> - 1.1.2-1
+- Update to 1.1.2
+
+* Sun Apr 28 2013 Nicolas Chauvet <kwizart@gmail.com> - 1.1.0-1
+- Update to 1.1.0
+
+* Sun Mar 10 2013 Nicolas Chauvet <kwizart@gmail.com> - 1.0.0-1
+- Update to 1.0.0
+- Clean-up spec file
+
+* Sun Nov 11 2012 Nicolas Chauvet <kwizart@gmail.com> - 1.0.0-0.2_pre3
+- Update to _pre3 as tagged in git
+
+* Thu Oct 18 2012 Nicolas Chauvet <kwizart@gmail.com> - 1.0.0-0.1_pre2
+- Update to 1.0.0_pre2
 
 * Wed Jan 25 2012 Nicolas Chauvet <kwizart@gmail.com> - 0.2.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
